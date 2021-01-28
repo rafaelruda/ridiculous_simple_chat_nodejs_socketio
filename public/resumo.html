@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.IO chat</title>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+
+    <form id="form" action="">
+      <input id="input" autocomplete="off" />
+      <button>Send</button>
+    </form>
+
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <script>
+      const username = prompt("Informe o nome do usuário");
+
+      const socket = io("http://localhost:3000/");
+
+      const messages = document.getElementById("messages");
+      const form = document.getElementById("form");
+      const input = document.getElementById("input");
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit("chat message", { username, message: input.value });
+          input.value = "";
+        }
+      });
+
+      socket.on("chat message", function (msg) {
+        const { username, message } = msg;
+        const item = document.createElement("li");
+        item.textContent = `${username || "Anônimo"}: ${message}`;
+        messages.appendChild(item);
+      });
+    </script>
+  </body>
+</html>
